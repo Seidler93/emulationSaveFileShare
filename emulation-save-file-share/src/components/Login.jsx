@@ -10,18 +10,33 @@ export default function Login({ onOk }) {
   }
 
   return (
-    <div style={{ maxWidth: 360, margin: "80px auto", fontFamily: "Arial" }}>
-      <h2>RPCS3 Save Manager</h2>
-      <p>Enter PIN</p>
+    <div className="login-card panel">
+      <h2 className="page-title">RPCS3 Save Manager</h2>
+
+      <div className="section-title">Enter PIN</div>
+
       <input
+        className="login-input"
         value={pin}
-        onChange={(e) => { setPin(e.target.value); setErr(""); }}
+        onChange={(e) => {
+          setPin(e.target.value);
+          setErr("");
+        }}
         type="password"
         placeholder="1234"
-        style={{ width: "100%", padding: 10, fontSize: 16 }}
       />
-      {err && <div style={{ color: "crimson", marginTop: 8 }}>{err}</div>}
-      <button onClick={submit} style={{ marginTop: 12, padding: 10, width: "100%" }}>
+
+      {err && (
+        <div className="status status-error">
+          {err}
+        </div>
+      )}
+
+      <button
+        className="btn"
+        style={{ marginTop: 14, width: "100%" }}
+        onClick={submit}
+      >
         Unlock
       </button>
     </div>

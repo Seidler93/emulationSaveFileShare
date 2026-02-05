@@ -31,24 +31,33 @@ export default function Library() {
   useEffect(() => { if (rpcs3Root) scan(); }, []);
 
   return (
-    <div style={{ padding: 16, fontFamily: "Arial" }}>
-      <h2 style={{ marginTop: 0 }}>Library</h2>
+    <div className="app-page">
+      <div className="panel">
+        <div className="page-header">
+          <h2 className="page-title">Library</h2>
+          <div className="page-subtitle">
+            {rpcs3Root ? rpcs3Root : "(not set)"}
+          </div>
+        </div>
 
-      <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 12 }}>
-        <button onClick={chooseRoot}>Set RPCS3 Folder</button>
-        <button onClick={scan}>Rescan</button>
-        <div style={{ opacity: 0.8, fontSize: 13 }}>
-          {rpcs3Root ? rpcs3Root : "(not set)"}
+        <div className="toolbar">
+          <button className="btn btn-secondary" onClick={chooseRoot}>
+            Set RPCS3 Folder
+          </button>
+          <button className="btn btn-secondary" onClick={scan}>
+            Rescan
+          </button>
+
+          {status && <div className="status">{status}</div>}
+        </div>
+
+        <div className="game-list">
+          {games.map((g) => (
+            <GameRow key={g.serial} game={g} />
+          ))}
         </div>
       </div>
-
-      {status && <div style={{ marginBottom: 12 }}>{status}</div>}
-
-      <div style={{ border: "1px solid #ddd", borderRadius: 8 }}>
-        {games.map((g) => (
-          <GameRow key={g.serial} game={g} />
-        ))}
-      </div>
     </div>
+
   );
 }
