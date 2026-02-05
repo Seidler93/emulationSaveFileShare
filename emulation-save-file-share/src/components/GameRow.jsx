@@ -71,19 +71,41 @@ export default function GameRow({ game }) {
     return () => unsub();
   }, [open, game.serial]);
 
-  async function handleDownload(item) {
+  async function handleInstall(item) {
     try {
-      setBusy(`Fetching download link for ${item.originalName}...`);
+      setBusy(`Preparing install for ${item.originalName}...`);
+
+      // get download URL from Storage
       const url = await getDownloadURL(ref(storage, item.storagePath));
 
-      // simplest working behavior: open the download in browser
-      // (Later we can "Install" by downloading bytes in Electron main and unzipping into RPCS3)
-      window.open(url, "_blank");
+      // pull RPCS3 root from localStorage (same place your Library stores it)
+      const rpcs3Root = localStorage.getItem("rpcs3Root");
 
-      setBusy("");
+      if (!rpcs3Root) {
+        setBusy("❌ Set your RPCS3 folder first.");
+        return;
+      }
+
+      setBusy(`Installing ${item.originalName} into RPCS3...`);
+
+      const res = await window.api.installFromUrl({
+        rpcs3Root,
+        type: item.type, // "save" or "savestate"
+        url
+      });
+
+      if (!res?.ok) throw new Error("Install failed.");
+
+      if (res.backupPath) {
+        setBusy(`✅ Installed. Backup created: ${res.backupPath}`);
+      } else {
+        setBusy(`✅ Installed to: ${res.installedTo}`);
+      }
+
+      setTimeout(() => setBusy(""), 2500);
     } catch (err) {
       console.error(err);
-      setBusy(`❌ Download failed: ${err?.message || String(err)}`);
+      setBusy(`❌ Install failed: ${err?.message || String(err)}`);
     }
   }
 
@@ -140,9 +162,9 @@ export default function GameRow({ game }) {
 
                     <button
                       className="btn btn-secondary"
-                      onClick={() => handleDownload(it)}
+                      onClick={() => handleInstall(it)}
                     >
-                      Download
+                      Install
                     </button>
                   </div>
                 ))}

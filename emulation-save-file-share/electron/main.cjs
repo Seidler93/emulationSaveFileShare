@@ -3,6 +3,7 @@ const path = require("path");
 const { scanRpcs3Library } = require("./rpcs3Scanner.cjs");
 const { zipPath } = require("./zip.cjs");
 const fs = require("fs");
+const { installZipToRpcs3 } = require("./install.cjs");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -51,4 +52,9 @@ ipcMain.handle("zip-path", async (_evt, absPath) => {
 
 ipcMain.handle("read-file-bytes", async (_evt, absPath) => {
   return fs.readFileSync(absPath); // returns Buffer
+});
+
+ipcMain.handle("install-from-url", async (_evt, payload) => {
+  // payload: { rpcs3Root, type, url }
+  return installZipToRpcs3(payload);
 });
