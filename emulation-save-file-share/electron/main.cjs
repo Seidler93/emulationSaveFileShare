@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, Menu } = require("electron");
 const path = require("path");
 const { scanRpcs3Library } = require("./rpcs3Scanner.cjs");
 const { zipPath } = require("./zip.cjs");
@@ -17,6 +17,8 @@ function createWindow() {
     }
   });
 
+  removeAppMenu(win);
+
   const startUrl = process.env.ELECTRON_START_URL;
   if (startUrl) win.loadURL(startUrl);
   else win.loadFile(path.join(__dirname, "..", "dist", "index.html"));
@@ -24,6 +26,17 @@ function createWindow() {
   return win;
 }
 
+// Remove default application menu (File/Edit/View…)
+function removeAppMenu(win) {
+  // Removes the menu completely (best for Windows/Linux)
+  Menu.setApplicationMenu(null);
+
+  // Extra: hide menu bar + keep Alt from bringing it back
+  if (win) {
+    win.setMenuBarVisibility(false);
+    win.autoHideMenuBar = true;
+  }
+}
 
 app.whenReady().then(() => {
   const mainWindow = createWindow();
