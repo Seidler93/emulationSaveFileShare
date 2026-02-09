@@ -1,10 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import GameRow from "./GameRow";
+import UpdateBanner from "./UpdateBanner";
 
 export default function Library() {
   const [rpcs3Root, setRpcs3Root] = useState(localStorage.getItem("rpcs3Root") || "");
   const [games, setGames] = useState([]);
   const [status, setStatus] = useState("");
+  const [appVersion, setAppVersion] = useState("");
+
+  useEffect(() => {
+    if (window.api?.getAppVersion) {
+      window.api.getAppVersion().then(setAppVersion);
+    }
+  }, []);
 
   async function chooseRoot() {
     const picked = await window.api.pickRpcs3Root();
@@ -32,6 +40,9 @@ export default function Library() {
 
   return (
     <div className="app-page">
+        <div className="version">
+          RPCS3 Save Manager {appVersion && `• v${appVersion}`}
+        </div>
       <div className="panel">
         <div className="page-header">
           <h2 className="page-title">Library</h2>
@@ -41,6 +52,7 @@ export default function Library() {
         </div>
 
         <div className="toolbar">
+          <UpdateBanner />
           <button className="btn btn-secondary" onClick={chooseRoot}>
             Set RPCS3 Folder
           </button>

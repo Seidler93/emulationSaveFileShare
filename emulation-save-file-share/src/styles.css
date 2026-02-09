@@ -28,13 +28,14 @@ body {
 
 .app-page {
   padding: 18px;
+  position: relative;
 }
 
 .panel {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 14px;
+  padding: 14px 14px 25px;
 }
 
 .page-header {
@@ -70,6 +71,15 @@ body {
   border: 1px solid var(--border);
   border-radius: 10px;
   overflow: hidden;
+}
+
+/* Version */
+.version {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  padding: 15px 20px;
+  font-size: 8px;
 }
 
 /* ===== Game Row ===== */

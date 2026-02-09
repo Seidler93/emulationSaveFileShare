@@ -1,14 +1,40 @@
 {
   "name": "emulation-save-file-share",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.4",
   "type": "module",
   "main": "electron/main.cjs",
+  "build": {
+    "appId": "com.primitive.rpcs3savemanager",
+    "productName": "RPCS3 Save Manager",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "electron/**"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Seidler93",
+        "repo": "emulationSaveFileShare"
+      }
+    ]
+  },
   "scripts": {
     "dev": "vite",
     "electron:dev": "set ELECTRON_START_URL=http://localhost:5173 && electron .",
     "build": "vite build",
     "electron:build": "npm run build && electron-builder",
+    "release": "npm run build && electron-builder --publish always",
     "lint": "eslint .",
     "preview": "vite preview",
     "dev:app": "concurrently -k \"npm run dev\" \"npm run electron:start\"",
@@ -19,8 +45,7 @@
     "@electron-toolkit/utils": "^4.0.0",
     "adm-zip": "^0.5.16",
     "archiver": "^7.0.1",
-    "electron": "^40.1.0",
-    "electron-builder": "^26.7.0",
+    "electron-updater": "^6.7.3",
     "firebase": "^12.8.0",
     "fs-extra": "^11.3.3",
     "react": "^19.2.0",
@@ -32,6 +57,8 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "concurrently": "^9.2.1",
+    "electron": "^40.1.0",
+    "electron-builder": "^26.7.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
