@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import GameRow from "./GameRow";
-import UpdateBanner from "./UpdateBanner";
+import GameRow from "../components/GameRow";
+import UpdateBanner from "../components/UpdateBanner";
+import { useAuth } from "../auth/AuthProvider";
 
 export default function Library() {
   const [rpcs3Root, setRpcs3Root] = useState(localStorage.getItem("rpcs3Root") || "");
   const [games, setGames] = useState([]);
   const [status, setStatus] = useState("");
   const [appVersion, setAppVersion] = useState("");
+  const { logout, user } = useAuth();
 
   useEffect(() => {
     if (window.api?.getAppVersion) {
@@ -40,9 +42,9 @@ export default function Library() {
 
   return (
     <div className="app-page">
-        <div className="version">
-          RPCS3 Save Manager {appVersion && `• v${appVersion}`}
-        </div>
+      <div className="version">
+        RPCS3 Save Manager {appVersion && `• v${appVersion}`}
+      </div>
       <div className="panel">
         <div className="page-header">
           <h2 className="page-title">Library</h2>
@@ -67,6 +69,11 @@ export default function Library() {
           {games.map((g) => (
             <GameRow key={g.serial} game={g} />
           ))}
+        </div>
+        <div className="toolbar logout">
+          <button className="btn btn-secondary" onClick={logout}>
+            Log out
+          </button>
         </div>
       </div>
     </div>

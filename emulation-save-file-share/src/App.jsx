@@ -1,8 +1,11 @@
-import { useState } from "react";
-import Login from "./components/Login";
-import Library from "./components/Library";
+import { useAuth } from "./auth/AuthProvider";
+import Login from "./pages/Login";
+import Library from "./pages/Library";
 
 export default function App() {
-  const [ok, setOk] = useState(false);
-  return ok ? <Library /> : <Login onOk={() => setOk(true)} />;
+  const { user, initializing } = useAuth();
+
+  if (initializing) return <div style={{ padding: 16 }}>Loading...</div>;
+
+  return user ? <Library /> : <Login />;
 }
