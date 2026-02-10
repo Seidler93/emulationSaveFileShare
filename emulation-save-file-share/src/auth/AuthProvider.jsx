@@ -4,7 +4,9 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signOut
+  signOut,
+  setPersistence,
+  browserLocalPersistence
 } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 
@@ -15,6 +17,11 @@ export function AuthProvider({ children }) {
   const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
+    // Ensure session persists across app restarts
+    setPersistence(auth, browserLocalPersistence).catch((err) => {
+      console.error("Auth persistence error:", err);
+    });
+
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       setInitializing(false);
@@ -35,7 +42,7 @@ export function AuthProvider({ children }) {
             { merge: true }
           );
         } else {
-          // Update last login timestamp (optional)
+          // Update last login timestamp
           await setDoc(ref, { lastLoginAt: serverTimestamp() }, { merge: true });
         }
       }
