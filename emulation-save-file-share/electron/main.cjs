@@ -5,6 +5,7 @@ const { zipPath } = require("./zip.cjs");
 const fs = require("fs");
 const { installZipToRpcs3 } = require("./install.cjs");
 const { autoUpdater } = require("electron-updater");
+const { spawn } = require("child_process");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -130,3 +131,56 @@ ipcMain.handle("update:install", async () => {
 ipcMain.handle("app:getVersion", () => {
   return app.getVersion();
 });
+
+ipcMain.handle("rpcs3:launch", async (_evt, payload) => {
+  try {
+    const { rpcs3Root, launchTarget, noGui } = payload || {};
+    if (!rpcs3Root) return { ok: false, error: "Missing RPCS3 root." };
+
+    const exe = path.join(rpcs3Root, "rpcs3.exe");
+    if (!fs.existsSync(exe)) return { ok: false, error: "rpcs3.exe not found in selected folder." };
+
+    if (!launchTarget) return { ok: false, error: "No launch target (EBOOT.BIN) found for this game." };
+    if (!fs.existsSync(launchTarget)) return { ok: false, error: "Launch target path does not exist." };
+
+    const args = [];
+    if (noGui) args.push("--no-gui");
+    args.push(launchTarget);
+
+    const child = spawn(exe, args, { detached: true, stdio: "ignore" });
+    child.unref();
+
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e?.message || String(e) };
+  }
+});
+
+ipcMain.handle("launch-game", async (_evt, payload) => {
+  const { rpcs3Root, ebootPath } = payload || {};
+  if (!rpcs3Root) return { ok: false, error: "Missing rpcs3Root" };
+  if (!ebootPath) return { ok: false, error: "Missing ebootPath" };
+
+  // Try to find rpcs3.exe inside the chosen root folder
+  const exe = path.join(rpcs3Root, "rpcs3.exe");
+  if (!fs.existsSync(exe)) {
+    return { ok: false, error: `Could not find rpcs3.exe in: ${rpcs3Root}` };
+  }
+  if (!fs.existsSync(ebootPath)) {
+    return { ok: false, error: `EBOOT not found: ${ebootPath}` };
+  }
+
+  try {
+    // Simple launch. You can add args later (fullscreen, no-gui, etc.)
+    const child = spawn(exe, [ebootPath], {
+      detached: true,
+      stdio: "ignore"
+    });
+    child.unref();
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e?.message || e) };
+  }
+});
+
+

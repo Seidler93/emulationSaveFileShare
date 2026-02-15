@@ -38,7 +38,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "dev:app": "concurrently -k \"npm run dev\" \"npm run electron:start\"",
-    "electron:start": "wait-on http://localhost:5173 && npm run electron:dev"
+    "electron:start": "wait-on http://localhost:5173 && npm run electron:dev",
+    "chatpack": "node scripts/chatpack.mjs"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
@@ -56,13 +57,16 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "clipboardy": "^5.3.0",
     "concurrently": "^9.2.1",
     "electron": "^40.1.0",
     "electron-builder": "^26.7.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
+    "fast-glob": "^3.3.3",
     "globals": "^16.5.0",
+    "inquirer": "^13.2.4",
     "vite": "^7.2.4",
     "wait-on": "^9.0.3"
   }

@@ -77,6 +77,46 @@ body {
   overflow: hidden;
 }
 
+.app-shell {
+  height: 100vh;
+}
+
+.top-switch {
+  display: flex;
+  gap: 8px;
+  padding: 14px 18px 0;
+}
+
+.top-switch .tab {
+  background: #2a2f3a;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.top-switch .tab.active {
+  background: var(--panel);
+  border-color: #3a4252;
+}
+
+.input {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  outline: none;
+  font-size: 13px;
+}
+
+.input:focus {
+  border-color: var(--accent);
+}
+
 /* Version */
 .version {
   position: absolute;
@@ -112,6 +152,18 @@ body {
 .game-meta {
   font-size: 12px;
   color: var(--muted);
+}
+
+.game-launch-row {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-start;
+  
+}
+
+.game-launch-row .btn {
+  width: auto;
+  padding: 8px 16px;
 }
 
 /* expand grid for open game */

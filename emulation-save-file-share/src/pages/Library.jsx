@@ -3,15 +3,12 @@ import GameRow from "../components/GameRow";
 import UpdateBanner from "../components/UpdateBanner";
 import { useAuth } from "../auth/AuthProvider";
 
-// Optional fallback map (if you add one later)
-// import titleMap from "../data/ps3TitleMap.json";
-
 export default function Library() {
   const [rpcs3Root, setRpcs3Root] = useState(localStorage.getItem("rpcs3Root") || "");
   const [games, setGames] = useState([]);
   const [status, setStatus] = useState("");
   const [appVersion, setAppVersion] = useState("");
-  const [query, setQuery] = useState("");
+  const [expandedSerial, setExpandedSerial] = useState(null);
   const { logout } = useAuth();
 
   useEffect(() => {
@@ -23,6 +20,7 @@ export default function Library() {
     if (!picked) return;
     localStorage.setItem("rpcs3Root", picked);
     setRpcs3Root(picked);
+    setExpandedSerial(null);
   }
 
   async function scan() {
@@ -30,42 +28,40 @@ export default function Library() {
       setStatus("Pick your RPCS3 folder first.");
       return;
     }
-    setStatus("Scanning...");
+    setStatus("Scanning installed games...");
     const res = await window.api.scanLibrary(rpcs3Root);
     if (!res.ok) {
       setStatus(res.error || "Scan failed");
       return;
     }
-
-    // Normalize display name now (works even before you add PARAM.SFO parsing)
-    const normalized = (res.games || []).map((g) => {
-      const title =
-        g.title
-        // || titleMap?.[g.serial]
-        || g.serial;
-
-      return { ...g, title };
-    });
-
-    setGames(normalized);
-    setStatus(`Found ${normalized.length} games with saves/savestates.`);
+    setGames(res.games || []);
+    setStatus(`Found ${res.games.length} installed games.`);
   }
 
-  useEffect(() => { if (rpcs3Root) scan(); }, []); // keep as-is if you like
+  useEffect(() => {
+    if (rpcs3Root) scan();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const displayGames = useMemo(() => {
-    const q = query.trim().toLowerCase();
+  const sortedGames = useMemo(() => {
+    return [...games].sort((a, b) =>
+      (a.title || a.serial).localeCompare(b.title || b.serial)
+    );
+  }, [games]);
 
-    return [...games]
-      .filter((g) => {
-        if (!q) return true;
-        return (
-          (g.title || "").toLowerCase().includes(q) ||
-          (g.serial || "").toLowerCase().includes(q)
-        );
-      })
-      .sort((a, b) => (a.title || "").localeCompare(b.title || ""));
-  }, [games, query]);
+  function toggleExpand(serial) {
+    setExpandedSerial((cur) => (cur === serial ? null : serial));
+  }
+
+  async function launchGame(game) {
+    if (!game?.ebootPath) {
+      setStatus("No EBOOT.BIN found for this game.");
+      return;
+    }
+    setStatus(`Launching ${game.title}...`);
+    const res = await window.api.launchGame({ rpcs3Root, ebootPath: game.ebootPath });
+    setStatus(res.ok ? "Launched!" : (res.error || "Launch failed"));
+  }
 
   return (
     <div className="app-page">
@@ -81,29 +77,28 @@ export default function Library() {
 
         <div className="toolbar">
           <UpdateBanner />
-
-          <input
-            className="input"
-            placeholder="Search by game name or serial…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            style={{ minWidth: 260 }}
-          />
-
           <button className="btn btn-secondary" onClick={chooseRoot}>
             Set RPCS3 Folder
           </button>
           <button className="btn btn-secondary" onClick={scan}>
             Rescan
           </button>
-
           {status && <div className="status">{status}</div>}
         </div>
 
         <div className="game-list">
-          {displayGames.map((g) => (
-            <GameRow key={g.serial} game={g} />
-          ))}
+          {sortedGames.map((g) => {
+            const expanded = expandedSerial === g.serial;
+
+            return (
+              <div key={g.serial} className="game-item">
+                {/* Click row to expand */}
+                <div onClick={() => toggleExpand(g.serial)} style={{ cursor: "pointer" }}>
+                  <GameRow game={g} expanded={expanded} />
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         <div className="toolbar logout">

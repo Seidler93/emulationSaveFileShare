@@ -11,6 +11,8 @@ contextBridge.exposeInMainWorld("api", {
   downloadUpdate: () => ipcRenderer.invoke("update:download"),
   installUpdate: () => ipcRenderer.invoke("update:install"),
   getAppVersion: () => ipcRenderer.invoke("app:getVersion"),
+  launchRpcs3Game: (payload) => ipcRenderer.invoke("rpcs3:launch", payload),
+  launchGame: (payload) => ipcRenderer.invoke("launch-game", payload),
 
   onUpdateAvailable: (cb) => ipcRenderer.on("update:available", (_e, data) => cb(data)),
   onUpdateNotAvailable: (cb) => ipcRenderer.on("update:notAvailable", () => cb()),

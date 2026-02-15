@@ -109,6 +109,37 @@ export default function GameRow({ game }) {
     }
   }
 
+  async function handleLaunch(e) {
+    e?.stopPropagation?.();
+
+    try {
+      const rpcs3Root = localStorage.getItem("rpcs3Root");
+      if (!rpcs3Root) {
+        setBusy("❌ Set your RPCS3 folder first.");
+        return;
+      }
+      if (!game?.ebootPath) {
+        setBusy("❌ No EBOOT.BIN found for this game.");
+        return;
+      }
+
+      setBusy(`Launching ${game.title}...`);
+      const res = await window.api.launchGame({ rpcs3Root, ebootPath: game.ebootPath });
+
+      if (!res?.ok) {
+        setBusy(`❌ Launch failed: ${res?.error || "Unknown error"}`);
+        return;
+      }
+
+      setBusy(`✅ Launched ${game.title}`);
+      setTimeout(() => setBusy(""), 2000);
+    } catch (err) {
+      console.error(err);
+      setBusy(`❌ Launch failed: ${err?.message || String(err)}`);
+    }
+  }
+
+
   return (
     <div className="game-row">
       <div className="game-header" onClick={() => setOpen(!open)}>
@@ -124,6 +155,11 @@ export default function GameRow({ game }) {
 
       {open && (
         <div className="game-expand-grid">
+          <div className="game-launch-row">
+            <button className="btn btn-primary" onClick={handleLaunch}>
+              Launch Game
+            </button>
+          </div>
 
           <Section title="Local Saves" items={game.saves} game={game} setBusy={setBusy} />
 
