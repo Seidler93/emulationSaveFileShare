@@ -44,7 +44,8 @@
     "dev:app": "concurrently -k \"npm run dev\" \"npm run electron:start\"",
     "electron:start": "wait-on http://localhost:5173 && npm run electron:dev",
     "chatpack": "node scripts/chatpack.mjs",
-    "bump": "node scripts/bump-version.js"
+    "bump": "node scripts/bump-version.js",
+    "copyhelp": "node scripts/copyhelp.mjs"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",

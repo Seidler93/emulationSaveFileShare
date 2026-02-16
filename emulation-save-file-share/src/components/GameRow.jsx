@@ -10,6 +10,7 @@ import {
   onSnapshot
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getGameMedia } from "../lib/gameMedia";
 
 async function uploadItem({ game, item }) {
   const zipAbs = await window.api.zipPath(item.absPath);
@@ -24,7 +25,7 @@ async function uploadItem({ game, item }) {
   await addDoc(collection(db, "rpcs3_assets"), {
     serial: game.serial,
     title: game.title,
-    type: item.type, // "save" or "savestate"
+    type: item.type,
     originalName: item.name,
     storagePath: objectPath,
     createdAt: serverTimestamp()
@@ -33,17 +34,18 @@ async function uploadItem({ game, item }) {
   return objectPath;
 }
 
-export default function GameRow({ game }) {
-  const [open, setOpen] = useState(false);
+export default function GameRow({ game, expanded, onToggle }) {
   const [busy, setBusy] = useState("");
 
   const [cloudItems, setCloudItems] = useState([]);
   const [cloudLoading, setCloudLoading] = useState(false);
   const [cloudError, setCloudError] = useState("");
 
+  const media = getGameMedia(game);
+
   // Live query whenever expanded
   useEffect(() => {
-    if (!open) return;
+    if (!expanded) return;
 
     setCloudLoading(true);
     setCloudError("");
@@ -69,16 +71,13 @@ export default function GameRow({ game }) {
     );
 
     return () => unsub();
-  }, [open, game.serial]);
+  }, [expanded, game.serial]);
 
   async function handleInstall(item) {
     try {
       setBusy(`Preparing install for ${item.originalName}...`);
 
-      // get download URL from Storage
       const url = await getDownloadURL(ref(storage, item.storagePath));
-
-      // pull RPCS3 root from localStorage (same place your Library stores it)
       const rpcs3Root = localStorage.getItem("rpcs3Root");
 
       if (!rpcs3Root) {
@@ -90,17 +89,14 @@ export default function GameRow({ game }) {
 
       const res = await window.api.installFromUrl({
         rpcs3Root,
-        type: item.type, // "save" or "savestate"
+        type: item.type,
         url
       });
 
       if (!res?.ok) throw new Error("Install failed.");
 
-      if (res.backupPath) {
-        setBusy(`✅ Installed. Backup created: ${res.backupPath}`);
-      } else {
-        setBusy(`✅ Installed to: ${res.installedTo}`);
-      }
+      if (res.backupPath) setBusy(`✅ Installed. Backup created: ${res.backupPath}`);
+      else setBusy(`✅ Installed to: ${res.installedTo}`);
 
       setTimeout(() => setBusy(""), 2500);
     } catch (err) {
@@ -139,11 +135,47 @@ export default function GameRow({ game }) {
     }
   }
 
-
   return (
-    <div className="game-row">
-      <div className="game-header" onClick={() => setOpen(!open)}>
-        <div>
+    <div
+      className={`game-row ${expanded ? "is-expanded" : ""}`}
+      style={
+        media.bgUrl
+          ? { backgroundImage: `url("${media.bgUrl}")` }
+          : undefined
+      }
+    >
+      {/* background overlay for readability */}
+      <div className="game-row-overlay" />
+
+      {/* corner platform badge */}
+      <img
+        className="platform-badge"
+        src={media.platformIconUrl}
+        alt={media.platformLabel}
+        title={media.platformLabel}
+        draggable={false}
+        onError={(e) => {
+          // if you haven't added the badge image yet, just hide it
+          e.currentTarget.style.display = "none";
+        }}
+      />
+
+      <div className="game-header" onClick={onToggle} role="button" tabIndex={0}>
+        <div className="game-header-left">
+          {/* If logo image exists, show it; otherwise fallback to text */}
+          {media.logoUrl ? (
+            <img
+              className="game-logo"
+              src={media.logoUrl}
+              alt={game.title}
+              draggable={false}
+              onError={(e) => {
+                // if missing, hide logo and fallback to text below
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          ) : null}
+
           <div className="game-title">{game.title}</div>
           <div className="game-serial">{game.serial}</div>
         </div>
@@ -153,10 +185,10 @@ export default function GameRow({ game }) {
         </div>
       </div>
 
-      {open && (
+      {expanded && (
         <div className="game-expand-grid">
           <div className="game-launch-row">
-            <button className="btn btn-primary" onClick={handleLaunch}>
+            <button className="btn" onClick={handleLaunch}>
               Launch Game
             </button>
           </div>
@@ -208,16 +240,10 @@ export default function GameRow({ game }) {
             )}
           </div>
 
-          {busy && (
-            <div className="status">
-              {busy}
-            </div>
-          )}
-
+          {busy && <div className="status">{busy}</div>}
         </div>
       )}
     </div>
-
   );
 }
 
@@ -246,18 +272,13 @@ function Section({ title, items, game, setBusy }) {
               <span className="file-type"> ({it.type})</span>
             </div>
 
-            <button
-              className="btn"
-              onClick={() => handleUpload(it)}
-            >
+            <button className="btn" onClick={() => handleUpload(it)}>
               Upload
             </button>
           </div>
         ))}
 
-        {!items.length && (
-          <div className="status">(none)</div>
-        )}
+        {!items.length && <div className="status">(none)</div>}
       </div>
     </div>
   );

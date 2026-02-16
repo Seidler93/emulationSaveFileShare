@@ -1,5 +1,6 @@
-/* ===== Global ===== */
-
+/* =========================
+   Theme + Base
+========================= */
 :root {
   --bg: #0f1115;
   --panel: #171a21;
@@ -24,7 +25,12 @@ body {
   font-family: Inter, Segoe UI, system-ui, Arial, sans-serif;
 }
 
-/* ===== Layout ===== */
+/* =========================
+   Layout / Containers
+========================= */
+.app-shell {
+  height: 100vh;
+}
 
 .app-page {
   padding: 18px;
@@ -77,47 +83,6 @@ body {
   overflow: hidden;
 }
 
-.app-shell {
-  height: 100vh;
-}
-
-.top-switch {
-  display: flex;
-  gap: 8px;
-  padding: 14px 18px 0;
-}
-
-.top-switch .tab {
-  background: #2a2f3a;
-  color: var(--text);
-  border: 1px solid var(--border);
-  padding: 8px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 12px;
-}
-
-.top-switch .tab.active {
-  background: var(--panel);
-  border-color: #3a4252;
-}
-
-.input {
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--panel-2);
-  color: var(--text);
-  outline: none;
-  font-size: 13px;
-}
-
-.input:focus {
-  border-color: var(--accent);
-}
-
-/* Version */
 .version {
   position: absolute;
   bottom: 12px;
@@ -126,117 +91,38 @@ body {
   font-size: 8px;
 }
 
-/* ===== Game Row ===== */
-
-.game-row {
-  border-top: 1px solid var(--border);
-  padding: 14px;
-}
-
-.game-header {
-  display: flex;
-  justify-content: space-between;
-  cursor: pointer;
-}
-
-.game-title {
-  font-weight: 700;
-  font-size: 15px;
-}
-
-.game-serial {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.game-meta {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.game-launch-row {
-  grid-column: 1 / -1;
-  display: flex;
-  justify-content: flex-start;
-  
-}
-
-.game-launch-row .btn {
-  width: auto;
-  padding: 8px 16px;
-}
-
-/* expand grid for open game */
-.game-expand-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 12px;
-}
-
-/* cloud section spans full width */
-.game-cloud {
-  grid-column: 1 / -1;
-}
-
-.file-type {
-  opacity: .7;
-  font-size: 12px;
-  margin-left: 4px;
-}
-
-.file-path {
-  font-size: 11px;
-  opacity: .5;
-  word-break: break-all;
-}
-
-.file-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* ===== Sections ===== */
-
-.section {
-  background: var(--panel-2);
-  border: 1px solid var(--border);
+/* =========================
+   Inputs
+========================= */
+.input,
+.login-input {
   border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  outline: none;
+}
+
+.input {
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+.login-input {
+  width: 100%;
   padding: 10px;
-  max-height: 260px;
-  overflow-y: auto;
+  font-size: 16px;
+  margin-top: 6px;
 }
 
-.section-title {
-  font-weight: 700;
-  font-size: 13px;
-  margin-bottom: 8px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: .5px;
+.input:focus,
+.login-input:focus {
+  border-color: var(--accent);
 }
 
-.file-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid #222733;
-}
-
-.file-row:last-child {
-  border-bottom: none;
-}
-
-.file-name {
-  font-size: 13px;
-  word-break: break-word;
-}
-
-/* ===== Buttons ===== */
-
+/* =========================
+   Buttons
+========================= */
 .btn {
   background: var(--accent);
   border: none;
@@ -271,8 +157,9 @@ body {
   filter: brightness(1.1);
 }
 
-/* ===== Status ===== */
-
+/* =========================
+   Status Text
+========================= */
 .status {
   font-size: 13px;
   margin-top: 8px;
@@ -283,37 +170,20 @@ body {
   color: var(--red);
 }
 
-/* ===== Login ===== */
-
-.login-card {
-  max-width: 380px;
-  margin: 90px auto;
-}
-
-.login-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--panel-2);
-  color: var(--text);
-  font-size: 16px;
-  margin-top: 6px;
-  outline: none;
-}
-
-.login-input:focus {
-  border-color: var(--accent);
-}
-
-/* ===== Login Additions ===== */
-
+/* =========================
+   Login Page
+========================= */
 .login-page {
   min-height: 100vh;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding: 18px;
+}
+
+.login-card {
+  max-width: 380px;
+  margin: 90px auto;
 }
 
 .login-header {
@@ -345,13 +215,7 @@ body {
   color: var(--muted);
 }
 
-.login-btn {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 13px;
-}
-
+.login-btn,
 .login-toggle {
   width: 100%;
   padding: 10px 12px;
@@ -379,4 +243,175 @@ body {
   font-size: 11px;
   color: var(--muted);
   opacity: 0.9;
+}
+
+/* =========================
+   Game Row (cinematic)
+========================= */
+.game-row {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 12px;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: rgba(20, 20, 24, 1);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.game-row-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+      rgba(0, 0, 0, 0.72) 0%,
+      rgba(0, 0, 0, 0.35) 55%,
+      rgba(0, 0, 0, 0.55) 100%);
+  pointer-events: none;
+}
+
+.game-row.is-expanded .game-row-overlay {
+  background: linear-gradient(90deg,
+      rgba(0, 0, 0, 0.78) 0%,
+      rgba(0, 0, 0, 0.45) 55%,
+      rgba(0, 0, 0, 0.65) 100%);
+}
+
+.platform-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  height: 30px;
+  width: auto;
+  opacity: 0.9;
+  z-index: 3;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
+  pointer-events: none;
+}
+
+.game-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px;
+  cursor: pointer;
+}
+
+.game-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.game-logo {
+  height: 54px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.5));
+}
+
+.game-title {
+  font-size: 22px;
+  font-weight: 800;
+  text-shadow: 0 6px 16px rgba(0, 0, 0, 0.55);
+}
+
+.game-serial {
+  font-size: 12px;
+  color: var(--muted);
+  opacity: 0.85;
+}
+
+.game-meta {
+  font-size: 14px;
+  color: var(--muted);
+  opacity: 0.9;
+  text-shadow: 0 6px 16px rgba(0, 0, 0, 0.55);
+}
+
+.game-expand-grid {
+  position: relative;
+  z-index: 2;
+  padding: 0 18px 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.game-launch-row {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.game-launch-row .btn {
+  width: auto;
+  padding: 8px 16px;
+}
+
+/* =========================
+   Sections + File Rows
+========================= */
+.section {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.section-title {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.file-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #222733;
+}
+
+.file-row:last-child {
+  border-bottom: none;
+}
+
+.file-name {
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.file-type {
+  opacity: 0.7;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.file-path {
+  font-size: 11px;
+  opacity: 0.5;
+  word-break: break-all;
+}
+
+/* used as: className="section game-cloud" */
+.game-cloud {
+  grid-column: 1 / -1;
 }

@@ -53,16 +53,6 @@ export default function Library() {
     setExpandedSerial((cur) => (cur === serial ? null : serial));
   }
 
-  async function launchGame(game) {
-    if (!game?.ebootPath) {
-      setStatus("No EBOOT.BIN found for this game.");
-      return;
-    }
-    setStatus(`Launching ${game.title}...`);
-    const res = await window.api.launchGame({ rpcs3Root, ebootPath: game.ebootPath });
-    setStatus(res.ok ? "Launched!" : (res.error || "Launch failed"));
-  }
-
   return (
     <div className="app-page">
       <div className="version">
@@ -89,13 +79,13 @@ export default function Library() {
         <div className="game-list">
           {sortedGames.map((g) => {
             const expanded = expandedSerial === g.serial;
-
             return (
               <div key={g.serial} className="game-item">
-                {/* Click row to expand */}
-                <div onClick={() => toggleExpand(g.serial)} style={{ cursor: "pointer" }}>
-                  <GameRow game={g} expanded={expanded} />
-                </div>
+                <GameRow
+                  game={g}
+                  expanded={expanded}
+                  onToggle={() => toggleExpand(g.serial)}
+                />
               </div>
             );
           })}
