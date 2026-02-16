@@ -1,7 +1,7 @@
 {
   "name": "emulation-save-file-share",
   "private": true,
-  "version": "0.0.8",
+  "version": "0.0.9",
   "type": "module",
   "main": "electron/main.cjs",
   "build": {
@@ -34,12 +34,13 @@
     "electron:dev": "set ELECTRON_START_URL=http://localhost:5173 && electron .",
     "build": "vite build",
     "electron:build": "npm run build && electron-builder",
-    "release": "npm run build && electron-builder --publish always",
+    "release": "npm run bump && git add package.json && git commit -m \"release\" && git push && npm run build && electron-builder --publish always",
     "lint": "eslint .",
     "preview": "vite preview",
     "dev:app": "concurrently -k \"npm run dev\" \"npm run electron:start\"",
     "electron:start": "wait-on http://localhost:5173 && npm run electron:dev",
-    "chatpack": "node scripts/chatpack.mjs"
+    "chatpack": "node scripts/chatpack.mjs",
+    "bump": "node scripts/bump-version.js"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
