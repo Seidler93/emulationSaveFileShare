@@ -1,7 +1,7 @@
 {
   "name": "emulation-save-file-share",
   "private": true,
-  "version": "0.0.9",
+  "version": "0.0.10",
   "type": "module",
   "main": "electron/main.cjs",
   "build": {
@@ -25,9 +25,13 @@
       {
         "provider": "github",
         "owner": "Seidler93",
-        "repo": "emulationSaveFileShare"
+        "repo": "emulationSaveFileShare",
+        "releaseType": "release"
       }
-    ]
+    ],
+    "releaseInfo": {
+      "releaseName": "SaveLocker v${version}"
+    }
   },
   "scripts": {
     "dev": "vite",
@@ -62,6 +66,7 @@
     "concurrently": "^9.2.1",
     "electron": "^40.1.0",
     "electron-builder": "^26.7.0",
+    "electron-release": "^2.2.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
