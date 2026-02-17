@@ -5,12 +5,12 @@ export function getGameMedia(game) {
   const platform = "rpcs3"; // later: "pcsx2"
   const platformLabel = "RPCS3 / PS3";
 
-  // Your custom art, keyed by serial
-  const bgUrl = serial ? `/media/bg/${serial}.png` : "";
-  const logoUrl = serial ? `/media/logo/${serial}.png` : "";
+  const base = import.meta.env.BASE_URL; // usually "/" in dev, "./" in prod if configured
 
-  // Small corner badge
-  const platformIconUrl = `/media/platform/${platform}.png`;
+  const platformIconUrl = `${base}media/platform/${platform}.png`;
+  const bgUrl = serial ? `${base}media/bg/${serial}.png` : "";
+  const logoUrl = serial ? `${base}media/logo/${serial}.png` : "";
+
 
   return { bgUrl, logoUrl, platformIconUrl, platformLabel };
 }

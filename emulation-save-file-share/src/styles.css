@@ -14,6 +14,10 @@
   --red: #ff5c5c;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -81,6 +85,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 10px;
   overflow: hidden;
+  padding: 10px;
 }
 
 .version {
@@ -258,8 +263,6 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-color: rgba(20, 20, 24, 1);
-
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .game-row-overlay {
@@ -281,9 +284,9 @@ body {
 
 .platform-badge {
   position: absolute;
-  top: 12px;
+  top: 5px;
   right: 12px;
-  height: 30px;
+  height: 80px;
   width: auto;
   opacity: 0.9;
   z-index: 3;
@@ -302,16 +305,35 @@ body {
 }
 
 .game-header-left {
+  position: relative;
   display: flex;
   flex-direction: column;
+  min-height: 75px;
+  /* align-items: center; */
   gap: 6px;
 }
 
 .game-logo {
-  height: 54px;
+  position: absolute;
+
+  left: 10px;
+  /* control horizontal placement */
+  top: 55%;
+  /* vertical centering */
+  transform: translateY(-50%);
+
+  max-height: 300%;
+  /* adjust to taste */
   width: auto;
+  transition: transform 0.2s ease;
   object-fit: contain;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.5));
+
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+}
+
+.game-row:hover .game-logo {
+  transform: translateY(-50%) scale(1.03);
 }
 
 .game-title {
@@ -331,6 +353,13 @@ body {
   color: var(--muted);
   opacity: 0.9;
   text-shadow: 0 6px 16px rgba(0, 0, 0, 0.55);
+  position: absolute;
+  bottom: -30px;
+  right: 12px;
+  height: 60px;
+  width: auto;
+  z-index: 3;
+  pointer-events: none;
 }
 
 .game-expand-grid {
@@ -343,6 +372,16 @@ body {
   margin-top: 12px;
 }
 
+.game-item {
+  scroll-margin-top: 90px;
+  /* adjust based on your header/toolbar height */
+}
+
+.game-row.is-expanded {
+  transform: translateY(-2px);
+  transition: transform 160ms ease;
+}
+
 .game-launch-row {
   grid-column: 1 / -1;
   display: flex;
@@ -352,6 +391,35 @@ body {
 .game-launch-row .btn {
   width: auto;
   padding: 8px 16px;
+}
+
+.game-expand-wrap {
+  position: relative;
+  z-index: 2;
+
+  max-height: 0;
+  overflow: hidden;
+
+  opacity: 0;
+  transform: translateY(-6px);
+
+  transition:
+    max-height 220ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+/* pick a max-height big enough to fit your expanded content */
+.game-expand-wrap.open {
+  max-height: 1200px;
+  /* adjust if needed */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* keep your existing padding on the inner grid, not the wrapper */
+.game-expand-grid {
+  padding: 0 18px 18px 18px;
 }
 
 /* =========================

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import GameRow from "../components/GameRow";
 import UpdateBanner from "../components/UpdateBanner";
 import { useAuth } from "../auth/AuthProvider";
@@ -10,10 +10,29 @@ export default function Library() {
   const [appVersion, setAppVersion] = useState("");
   const [expandedSerial, setExpandedSerial] = useState(null);
   const { logout } = useAuth();
+  const rowRefs = useRef({}); // { [serial]: HTMLElement }
 
   useEffect(() => {
     if (window.api?.getAppVersion) window.api.getAppVersion().then(setAppVersion);
   }, []);
+
+  useEffect(() => {
+    if (!expandedSerial) return;
+
+    const el = rowRefs.current[expandedSerial];
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    const offset = window.scrollY + rect.top - 80; // 80px offset for header
+
+    window.scrollTo({
+      top: offset,
+      behavior: "smooth"
+    });
+
+  }, [expandedSerial]);
+
+
 
   async function chooseRoot() {
     const picked = await window.api.pickRpcs3Root();
@@ -80,11 +99,20 @@ export default function Library() {
           {sortedGames.map((g) => {
             const expanded = expandedSerial === g.serial;
             return (
-              <div key={g.serial} className="game-item">
+              <div
+                key={g.serial}
+                className="game-item"
+                ref={(node) => {
+                  if (node) rowRefs.current[g.serial] = node;
+                }}
+                tabIndex={-1} // allows programmatic focus without adding to tab order
+              >
                 <GameRow
                   game={g}
                   expanded={expanded}
-                  onToggle={() => toggleExpand(g.serial)}
+                  onToggle={() =>
+                    setExpandedSerial((cur) => (cur === g.serial ? null : g.serial))
+                  }
                 />
               </div>
             );

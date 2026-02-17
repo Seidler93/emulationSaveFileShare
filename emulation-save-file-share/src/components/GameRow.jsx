@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, } from "react";
 import { db, storage } from "../firebase";
 import {
   addDoc,
@@ -36,6 +36,7 @@ async function uploadItem({ game, item }) {
 
 export default function GameRow({ game, expanded, onToggle }) {
   const [busy, setBusy] = useState("");
+  const [logoFailed, setLogoFailed] = useState(false);
 
   const [cloudItems, setCloudItems] = useState([]);
   const [cloudLoading, setCloudLoading] = useState(false);
@@ -162,22 +163,20 @@ export default function GameRow({ game, expanded, onToggle }) {
 
       <div className="game-header" onClick={onToggle} role="button" tabIndex={0}>
         <div className="game-header-left">
-          {/* If logo image exists, show it; otherwise fallback to text */}
-          {media.logoUrl ? (
+          {media.logoUrl && !logoFailed ? (
             <img
               className="game-logo"
               src={media.logoUrl}
               alt={game.title}
               draggable={false}
-              onError={(e) => {
-                // if missing, hide logo and fallback to text below
-                e.currentTarget.style.display = "none";
-              }}
+              onError={() => setLogoFailed(true)}
             />
-          ) : null}
-
-          <div className="game-title">{game.title}</div>
-          <div className="game-serial">{game.serial}</div>
+          ) : (
+            <>
+              <div className="game-title">{game.title}</div>
+              <div className="game-serial">{game.serial}</div>
+            </>
+          )}
         </div>
 
         <div className="game-meta">
@@ -185,7 +184,7 @@ export default function GameRow({ game, expanded, onToggle }) {
         </div>
       </div>
 
-      {expanded && (
+      <div className={`game-expand-wrap ${expanded ? "open" : ""}`}>
         <div className="game-expand-grid">
           <div className="game-launch-row">
             <button className="btn" onClick={handleLaunch}>
@@ -204,45 +203,12 @@ export default function GameRow({ game, expanded, onToggle }) {
 
           {/* Cloud Downloads */}
           <div className="section game-cloud">
-            <div className="section-title">Downloadable (from Firebase)</div>
-
-            {cloudLoading && <div className="status">Loading…</div>}
-
-            {cloudError && (
-              <div className="status status-error">❌ {cloudError}</div>
-            )}
-
-            {!cloudLoading && !cloudError && cloudItems.length === 0 && (
-              <div className="status">(Nothing uploaded yet)</div>
-            )}
-
-            {!cloudLoading && !cloudError && cloudItems.length > 0 && (
-              <div className="file-list">
-                {cloudItems.map((it) => (
-                  <div key={it.id} className="file-row">
-                    <div className="file-name">
-                      <div>
-                        {it.originalName}
-                        <span className="file-type"> ({it.type})</span>
-                      </div>
-                      <div className="file-path">{it.storagePath}</div>
-                    </div>
-
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => handleInstall(it)}
-                    >
-                      Install
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+            ...
           </div>
 
           {busy && <div className="status">{busy}</div>}
         </div>
-      )}
+      </div>
     </div>
   );
 }
